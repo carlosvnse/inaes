@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mi domicilio</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+  </head>
+  <body>
+    <div id="map"></div>
+    <div class="container">
+      <div id = "divFormulario" style = "position:absolute; top:0; left:0; padding:20px; width: 25%;">
+        <form name = "formulario">
+            <div class="form-group">
+              <select class="form-control" id="entidadFederativa" onchange = "seleccionarEntidadFederativa()"  class = "form-control input-sm">
+              </select>
+            </div>
+            <div class="form-group">
+              <select class="form-control" id="municipio" onchange = "seleccionarMunicipio()" class = "form-control input-sm">
+              </select>
+            </div>
+            <div class="form-group">
+              <select class="form-control" id="localidad" onchange = "seleccionarLocalidad()" class = "form-control input-sm">
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="cp" aria-describedby="cp" placeholder="Codigo Postal" size = "5" maxlength="5">
+            </div>
+			      <div class="form-group">
+              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="Vialidad" placeholder="Correo electrónico">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="Domicilio" placeholder="Calle">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="numeroExterior" aria-describedby="Numero exterior" placeholder="Número exterior">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="numeroInterior" aria-describedby="emailHelp" placeholder="Número interior">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="latitud" aria-describedby="emailHelp" placeholder="Latitud" disabled>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="longitud" aria-describedby="emailHelp" placeholder="Longitud" disabled>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="referencia" aria-describedby="Referencia" placeholder="Referencia">
+            </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7imSRVq3rnoeLP-ON8RYBvYdiFo-WE2c&libraries=drawing&callback=initMap" async defer></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script>
+      // This example requires the Drawing library. Include the libraries=drawing
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6YBZ5PJ5HWpccusFrKP-uIYhNkmyUSuU&libraries=drawing">
+      var estados = [];
+      var municipios = [];
+      var localidades = [];
+      var map = null; 
+      var infoWindow = null;
+      
+      $(document).ready(function(){
+        consultarEstados()
+      })
+      function consultarEstados(){
+        var url= "http://localhost:8080/api/v1/estados";
+        $.getJSON(url, function(datos){
+          estados = datos;
+    	    $("#entidadFederativa").empty();
+          $("#municipio").empty();
+          $("#localidad").empty();
+          $("#entidadFederativa").append('<option value="0">Selecione su entidad federativa</option>');
+
+          $.each(datos, function(id, dato){
+            $("#entidadFederativa").append('<option value="'+dato.idEstado+'">'+dato.nombre+'</option>');
+          })
+        });
+      }
+      function seleccionarEntidadFederativa(){
+        var idEstado = $("#entidadFederativa").val();
+        consultarMunicipios(idEstado);
+        for(var i = 0; i < estados.length; i++){
+          if(estados[i].idEstado == idEstado){
+            //alert("" + JSON.stringify(estados));
+            //alert("Estado:" + i + ":" + JSON.stringify(estados[i]));
+            /*for(var j in google.maps){
+              console.log(j + ": " + google.maps[j])
+            }*/
+            map.panTo(new google.maps.LatLng(estados[i].latitud,estados[i].longitud));
+            map.setZoom(8);
+          }
+        }
+      }
+      function consultarMunicipios(idEstado){
+        var url= "http://localhost:8080/api/v1/municipiosdeEstado/" + idEstado;
+        $.getJSON(url, function(datos){
+          municipios = datos;
+    	    $("#municipio").empty();
+          $("#localidad").empty();
+          $("#municipio").append('<option value="0">Selecione su municipio</option>');
+          $.each(datos, function(id, dato){
+            $("#municipio").append('<option value="'+dato.idMunicipio+'">'+dato.nombre+'</option>');
+          })
+        });
+      }
+      function seleccionarMunicipio(){
+        var idMunicipio = $("#municipio").val();
+        consultarLocalidades(idMunicipio);
+        for(var i = 0; i < municipios.length; i++){
+          if(municipios[i].idMunicipio == idMunicipio){
+            //alert("" + JSON.stringify(estados));
+            //alert("Estado:" + i + ":" + JSON.stringify(estados[i]));
+            /*for(var j in google.maps){
+              console.log(j + ": " + google.maps[j])
+            }*/
+            map.panTo(new google.maps.LatLng(municipios[i].latitud,municipios[i].longitud));
+            map.setZoom(12);
+
+          }
+        }
+      }
+      function consultarLocalidades(idMunicipio){
+        var url= "http://localhost:8080/api/v1/localidadesdeMunicipio/" + idMunicipio;
+        $.getJSON(url, function(datos){
+          localidades = datos;
+    	    $("#localidad").empty();
+          $("#localidad").append('<option value="0">Selecione su localidad</option>');
+          $.each(datos, function(id, dato){
+            $("#localidad").append('<option value="'+dato.idLocalidad+'">'+dato.nombre+'</option>');
+          })
+        });
+      }
+      function seleccionarLocalidad(){
+        var idLocalidad = $("#localidad").val();
+        for(var i = 0; i < localidades.length; i++){
+          if(localidades[i].idLocalidad == idLocalidad){
+            //alert("" + JSON.stringify(estados));
+            //alert("Estado:" + i + ":" + JSON.stringify(estados[i]));
+            /*for(var j in google.maps){
+              console.log(j + ": " + google.maps[j])
+            }*/
+            map.panTo(new google.maps.LatLng(localidades[i].latitud,localidades[i].longitud));
+            map.setZoom(17);
+
+          }
+        }
+      }
+      
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 23.715000, lng: -103.730000},
+          disableDefaultUI: true,
+		      zoom: 5
+        });
+
+        /*var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.MARKER,
+          drawingControl: false,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+          },
+          markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+          circleOptions: {
+            fillColor: '#ffff00',
+            fillOpacity: 1,
+            strokeWeight: 5,
+            clickable: false,
+            editable: true,
+            zIndex: 1
+          }
+        });*/
+        
+        map.addListener('click', function(mapsMouseEvent) {
+          // Close the current InfoWindow.
+          try{
+            infoWindow.close();
+          }catch(erro){
+
+          }
+          $("#latitud").val(mapsMouseEvent.latLng.lat)
+          $("#longitud").val(mapsMouseEvent.latLng.lng)
+          // Create a new InfoWindow.
+          infoWindow = new google.maps.InfoWindow({position: mapsMouseEvent.latLng});
+          infoWindow.setContent(mapsMouseEvent.latLng.toString());
+          infoWindow.open(map);
+        });
+        //drawingManager.setMap(map);
+      }
+    </script>
+  </body>
+</html>
