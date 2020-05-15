@@ -9,5 +9,5 @@ import com.companyname.springbootcrudrest.model.Localidad;
 
 @Repository
 public interface LocalidadRepository extends JpaRepository<Localidad, Long>{
-	List<Localidad> findByIdMunicipio(long idMunicipio);
+	List<Localidad> findByIdMunicipio(long idDomicilio);
 }

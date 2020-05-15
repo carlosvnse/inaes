@@ -23,10 +23,15 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
   </head>
   <body>
-    <div id="map"></div>
+    <div id="map" style = "z-index: 100;"></div>
     <div class="container">
-      <div id = "divFormulario" style = "position:absolute; top:0; left:0; padding:20px; width: 25%;">
-        <form name = "formulario">
+        <div id = "divSVG" style = "position:absolute; top:0; left:0; z-index: 200;">
+          <svg width="1000" height="1000">
+            <circle cx="500" cy="500" r="40" stroke="green" stroke-width="4" fill="yellow" onmouseover = "alert('pulsando sobre el circulo')"/>
+          </svg>
+        </div>
+        <div id = "divFormulario" style = "position:absolute; top:0; left:0; padding:20px; width: 25%; z-index: 300;">
+          <form name = "formulario">
             <div class="form-group">
               <select class="form-control" id="entidadFederativa" onchange = "seleccionarEntidadFederativa()"  class = "form-control input-sm">
               </select>

@@ -28,6 +28,14 @@ public class Domicilio {
 	private String referencia;
 	
 	@Id
+	@Column(name = "idDomicilio", nullable = false)
+	public long getIdDomicilio() {
+		return idDomicilio;
+	}
+	public void setIdDomicilio(long idDomicilio) {
+		this.idDomicilio = idDomicilio;
+	}
+	
 	@Column(name = "idEstado", nullable = false)
 	public long getIdEstado() {
 		return idEstado;
@@ -36,62 +44,56 @@ public class Domicilio {
 		this.idEstado = idEstado;
 	}
 	
-	@Column(name = "latitud", nullable = false)
-	public BigDecimal getLatitud() {
-		return latitud;
-	}
-	public void setLatitud(BigDecimal latitud) {
-		this.latitud = latitud;
-	}
-	@Column(name = "longitud", nullable = false)
-	public BigDecimal getLongitud() {
-		return longitud;
-	}
-	public void setLongitud(BigDecimal longitud) {
-		this.longitud = longitud;
-	}
-	public long getIdDomicilio() {
-		return idDomicilio;
-	}
-	public void setIdDomicilio(long idDomicilio) {
-		this.idDomicilio = idDomicilio;
-	}
+	@Column(name = "idMunicipio", nullable = false)
 	public long getIdMunicipio() {
 		return idMunicipio;
 	}
 	public void setIdMunicipio(long idMunicipio) {
 		this.idMunicipio = idMunicipio;
 	}
+	
+	@Column(name = "idLocalidad", nullable = true)
 	public long getIdLocalidad() {
 		return idLocalidad;
 	}
 	public void setIdLocalidad(long idLocalidad) {
 		this.idLocalidad = idLocalidad;
 	}
+	
+	@Column(name = "tipoVialidad", nullable = true)
 	public String getTipoVialidad() {
-		return tipoVialidad;
+		return this.tipoVialidad;
 	}
 	public void setTipoVialidad(String tipoVialidad) {
 		this.tipoVialidad = tipoVialidad;
 	}
+	
+	@Column(name = "domicilio", nullable = false)
 	public String getDomicilio() {
 		return domicilio;
 	}
 	public void setDomicilio(String domicilio) {
 		this.domicilio = domicilio;
 	}
-	public String getNumInterior() {
-		return numInterior;
-	}
-	public void setNumInterior(String numInterior) {
-		this.numInterior = numInterior;
-	}
+	
+	
+	@Column(name = "numExterior", nullable = false)
 	public String getNumExterior() {
 		return numExterior;
 	}
 	public void setNumExterior(String numExterior) {
 		this.numExterior = numExterior;
 	}
+	
+	@Column(name = "numInterior", nullable = true)
+	public String getNumInterior() {
+		return numInterior;
+	}
+	public void setNumInterior(String numInterior) {
+		this.numInterior = numInterior;
+	}
+	
+	@Column(name = "referencia", nullable = true)
 	public String getReferencia() {
 		return referencia;
 	}
@@ -99,5 +101,19 @@ public class Domicilio {
 		this.referencia = referencia;
 	}
 	
+	@Column(name = "latitud", nullable = true)
+	public BigDecimal getLatitud() {
+		return latitud;
+	}
+	public void setLatitud(BigDecimal latitud) {
+		this.latitud = latitud;
+	}
 	
+	@Column(name = "longitud", nullable = true)
+	public BigDecimal getLongitud() {
+		return longitud;
+	}
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
+	}
 }
